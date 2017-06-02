@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-export default class SearchBar extends Component {
+import { fetchWeather } from '../actions/index'
+
+class SearchBar extends Component {
 
   constructor(props) {
     super(props)
@@ -21,7 +25,8 @@ export default class SearchBar extends Component {
     e.preventDefault()
 
     // We need to go and fetch weather data
-    
+    this.props.fetchWeather(this.state.term)
+    this.setState({ term: '' })
   }
 
   render() {
@@ -44,3 +49,10 @@ export default class SearchBar extends Component {
     )
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ fetchWeather }, dispatch)
+}
+
+export default connect(null, mapDispatchToProps)(SearchBar)
+// null - because mapDispatchToProps always must be 2. argument
