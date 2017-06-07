@@ -3,23 +3,27 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import Chart from '../components/chart'
+import GoogleMap from '../components/google_map'
 
 class WeatherList extends Component {
 
   renderWeather(cityData) {
     const city = cityData.city.name
-    const temps = cityData.list.map((weather) => {
-      return weather.main.temp
-    })
+
+    const temps = cityData.list.map(weather => weather.main.temp)
+    const pressures = cityData.list.map(weather => weather.main.pressure)
+    const humidities = cityData.list.map(weather => weather.main.humidity)
+
+    const { lon, lat } = cityData.city.coord
 
     console.log(temps)
 
     return (
       <tr key={city}>
-        <td>{city}</td>
-        <td>
-          <Chart data={temps} color='orange' />
-        </td>
+        <td><GoogleMap lon={lon} lat={lat}/></td>
+        <td><Chart data={temps} color='orange' units='K' /></td>
+        <td><Chart data={pressures} color='green' units='hPa' /></td>
+        <td><Chart data={humidities} color='black' units='%' /></td>
       </tr>
     )
   }
@@ -30,9 +34,9 @@ class WeatherList extends Component {
         <thead>
           <tr>
             <th>City</th>
-            <th>Temperature</th>
-            <th>Pressure</th>
-            <th>Humidity</th>
+            <th>Temperature (K)</th>
+            <th>Pressure (hPa)</th>
+            <th>Humidity (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -45,14 +49,10 @@ class WeatherList extends Component {
   }
 }
 
-// function mapStateToProps(state) {
-//   return {
-//     weather: state.weather
-//   }
-// }
-
-function mapStateToProps({ weather }) {
-  return { weather }
+function mapStateToProps(state) {
+  return {
+    weather: state.weather
+  }
 }
 
 export default connect(mapStateToProps)(WeatherList)
